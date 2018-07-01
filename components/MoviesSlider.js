@@ -1,5 +1,5 @@
 import React from 'react'
-import {Animated,View,Image,Dimensions,PanResponder} from 'react-native'
+import {Animated,View,Image,Dimensions,PanResponder,TouchableHighlight} from 'react-native'
 import PropTypes from 'prop-types'
 
 
@@ -76,7 +76,8 @@ export default class MoviesSlider extends React.Component{
      return {
          slider :{
             flexDirection: 'row' ,
-            height: 300,
+            height: 390,
+             backgroundColor: '#1b1b1b',
             width : (this.props.movies.length+2) * this.state.width,
             left : (this.state.page+1) * -1 * this.state.width ,
             transform : [{
@@ -87,27 +88,108 @@ export default class MoviesSlider extends React.Component{
          image : {
              width : this.state.width,
              height: 300 ,
-         }
+         },
+         viewSlide:{
+             width : this.state.width,
+             height: 390 ,
+             position: 'relative'
+         },
+         poster:{
+            position:'absolute',
+            top: 150 ,
+            left: 25 ,
+            width : 150,
+            height : 220,
+
+         },
+         title:{
+             top: 20 ,
+             left : 200 ,
+             color : '#FFF',
+             fontSize : 18,
+         },
+         masque :{
+                 backgroundColor: 'transparent',
+                 position : 'absolute',
+                 left : 200 ,
+                 top : 330 ,
+                 right: 0 ,
+                 overflow : 'hidden'
+         },
      }
     }
+    posterTranslte(index){
+     if (index === this.state.page){
+         return {
+             transform: [{
+                 translateX: Animated.divide(this.state.translate,2)
+             }]
+        }
+     }
+     if (index === this.state.page+1){
+         return {
+             transform: [{
+                 translateX: Animated.divide(Animated.add(this.state.translate,this.state.width),2)
+             }]
+         }
+     }
+     if (index === this.state.page-1){
+         return {
+             transform: [{
+                 translateX: Animated.divide(Animated.add(this.state.translate,this.state.width * (-1)),2)
+             }]
+         }
+     }
+    return this.translateX( new Animated.Value(0))
+ }
 
+    showMovie(movie){
+     alert(movie.name)
+    }
 
     render() {
      const style = this.getStyle()
         return (
             <Animated.View  {...this.panResponder.panHandlers} style={style.slider}>
-                <Image  source={{ uri:this.props.movies[this.props.movies.length-1]}} style={ style.image }/>
-
-                {this.props.movies.map((movie,k)=>{
-                    return (
-                         <Image key={k} source={{ uri:movie}} style={ style.image }/>
-                    )
+                <Image key={-1} source={this.props.movies[this.props.movies.length-1].scene} style={style.image} />
+                <TouchableHighlight onpress={()=>this.showMovie(this.props.movies[this.props.movies.length-1])}>
+                <Animated.Image key={-1} source={this.props.movies[this.props.movies.length-1].poster} style={[style.poster,this.posterTranslte((-1))]} />
+                </TouchableHighlight>
+                <View style={style.masque}>
+                <Animated.Text style={[style.title,this.posterTranslte((-1))]}>
+                    {this.state.movies[this.props.movies.length-1]}
+                </Animated.Text>
+                </View>
+                {this.props.movies.map((obj,k)=>{
+                    //console.log(obj.name)
+                     return(
+                         <View key={k} style={style.viewSlide}>
+                           <Image  source={obj.scene} style={style.image} />
+                         <TouchableHighlight onpress={()=>this.showMovie(obj)}>
+                           <Animated.Image source={obj.poster} style={ [style.poster,this.posterTranslte((k))]} />
+                         </TouchableHighlight>
+                             <View  style={style.masque}>
+                             <Animated.Text style={[style.title,this.posterTranslte((k))]}>
+                                 {obj.name}
+                             </Animated.Text>
+                             </View>
+                         </View>
+                     )
                 })}
-                <Image  source={{ uri:this.props.movies[0]}} style={ style.image }/>
-
+                <View>
+                    <Image key={this.props.movies.length} source={this.props.movies[0].scene} style={style.image} />
+                <TouchableHighlight onpress={()=>this.showMovie(this.props.movies[0])}>
+                    <Animated.Image key={this.props.movies.length} source={this.props.movies[0].poster} style={[style.poster,this.posterTranslte((this.props.movies.length))]} />
+                </TouchableHighlight>
+                   <View  style={style.masque}>
+                    <Animated.Text style={[style.title,this.posterTranslte((this.props.movies.length))]}>
+                        {this.state.movies[0]}
+                    </Animated.Text>
+                   </View>
+                </View>
             </Animated.View>
-        )
-    }
+              )
+            }
 
 
 
