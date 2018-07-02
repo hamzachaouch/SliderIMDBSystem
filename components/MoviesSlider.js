@@ -103,8 +103,6 @@ export default class MoviesSlider extends React.Component{
 
          },
          title:{
-             top: 20 ,
-             left : 200 ,
              color : '#FFF',
              fontSize : 18,
          },
@@ -140,34 +138,36 @@ export default class MoviesSlider extends React.Component{
              }]
          }
      }
-    return this.translateX( new Animated.Value(0))
+
  }
 
-    showMovie(movie){
-     alert(movie.name)
+    posterClick(movie){
+        alert(movie.name)
     }
 
     render() {
      const style = this.getStyle()
         return (
             <Animated.View  {...this.panResponder.panHandlers} style={style.slider}>
+                <TouchableHighlight onPress={()=>this.posterClick(this.props.movies.length-1) } >
+
                 <Image key={-1} source={this.props.movies[this.props.movies.length-1].scene} style={style.image} />
-                <TouchableHighlight onpress={()=>this.showMovie(this.props.movies[this.props.movies.length-1])}>
-                <Animated.Image key={-1} source={this.props.movies[this.props.movies.length-1].poster} style={[style.poster,this.posterTranslte((-1))]} />
                 </TouchableHighlight>
+                <Animated.Image key={-1} source={this.props.movies[this.props.movies.length-1].poster} style={[style.poster,this.posterTranslte((-1))]} />
                 <View style={style.masque}>
                 <Animated.Text style={[style.title,this.posterTranslte((-1))]}>
-                    {this.state.movies[this.props.movies.length-1]}
+                    {this.props.movies[this.props.movies.length-1].name}
                 </Animated.Text>
                 </View>
                 {this.props.movies.map((obj,k)=>{
-                    //console.log(obj.name)
                      return(
+
                          <View key={k} style={style.viewSlide}>
-                           <Image  source={obj.scene} style={style.image} />
-                         <TouchableHighlight onpress={()=>this.showMovie(obj)}>
-                           <Animated.Image source={obj.poster} style={ [style.poster,this.posterTranslte((k))]} />
-                         </TouchableHighlight>
+                             <TouchableHighlight onPress={()=>this.posterClick(obj) } >
+                             <Image  source={obj.scene} style={style.image} />
+                             </TouchableHighlight>
+
+                             <Animated.Image source={obj.poster} style={ [style.poster,this.posterTranslte((k))]} />
                              <View  style={style.masque}>
                              <Animated.Text style={[style.title,this.posterTranslte((k))]}>
                                  {obj.name}
@@ -177,13 +177,16 @@ export default class MoviesSlider extends React.Component{
                      )
                 })}
                 <View>
+                    <TouchableHighlight onPress={()=>this.posterClick(this.props.movies[0]) } >
+
                     <Image key={this.props.movies.length} source={this.props.movies[0].scene} style={style.image} />
-                <TouchableHighlight onpress={()=>this.showMovie(this.props.movies[0])}>
-                    <Animated.Image key={this.props.movies.length} source={this.props.movies[0].poster} style={[style.poster,this.posterTranslte((this.props.movies.length))]} />
-                </TouchableHighlight>
+                    </TouchableHighlight>
+
+                        <Animated.Image key={this.props.movies.length} source={this.props.movies[0].poster} style={[style.poster,this.posterTranslte((this.props.movies.length))]} />
                    <View  style={style.masque}>
                     <Animated.Text style={[style.title,this.posterTranslte((this.props.movies.length))]}>
-                        {this.state.movies[0]}
+                        {this.props.movies[0].name}
+
                     </Animated.Text>
                    </View>
                 </View>
